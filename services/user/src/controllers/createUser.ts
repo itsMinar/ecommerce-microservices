@@ -15,7 +15,7 @@ const createUser = async (
     }
 
     // check if the authUserId already exists
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.user.findUnique({
       where: { authUserId: parsedBody.data.authUserId },
     });
     if (existingUser) {
