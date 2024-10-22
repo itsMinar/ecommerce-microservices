@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Express, Request, Response } from 'express';
 import config from './config.json';
+import middlewares from './middlewares';
 
 const createHandler = (host: string, path: string, method: string) => {
   return async (req: Request, res: Response) => {
@@ -18,11 +19,17 @@ const createHandler = (host: string, path: string, method: string) => {
         data: req.body,
         headers: {
           origin: 'http://localhost:8081',
+          'x-user-id': req.headers['x-user-id'] || '',
+          'x-user-email': req.headers['x-user-email'] || '',
+          'x-user-name': req.headers['x-user-name'] || '',
+          'x-user-role': req.headers['x-user-role'] || '',
+          'User-Agent': req.headers['user-agent'],
         },
       });
 
       return res.json(data);
     } catch (error) {
+      console.log('🚀 ~ return ~ error:', error);
       if (error instanceof axios.AxiosError) {
         return res
           .status(error.response?.status || 500)
@@ -34,6 +41,11 @@ const createHandler = (host: string, path: string, method: string) => {
   };
 };
 
+// map middlewares
+export const getMiddlewares = (names: string[]) => {
+  return names.map((name) => middlewares[name]);
+};
+
 // main config
 export const configureRoutes = (app: Express) => {
   Object.entries(config.services).forEach(([_name, service]) => {
@@ -41,10 +53,11 @@ export const configureRoutes = (app: Express) => {
 
     service.routes.forEach((route) => {
       route.methods.forEach((method) => {
-        const handler = createHandler(hostName, route.path, method);
         const endpoint = `/api${route.path}`;
+        const middleware = getMiddlewares(route.middlewares);
+        const handler = createHandler(hostName, route.path, method);
 
-        app[method](endpoint, handler);
+        app[method](endpoint, middleware, handler);
       });
     });
   });
