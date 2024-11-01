@@ -2,7 +2,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { type Application } from 'express';
 import morgan from 'morgan';
-import { createProduct, getProductDetails, getProducts } from './controllers';
+import {
+  createProduct,
+  getProductDetails,
+  getProducts,
+  updateProduct,
+} from './controllers';
 
 dotenv.config();
 
@@ -18,20 +23,21 @@ app.get('/health', (_req, res) => {
 });
 
 // restrict origin
-app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:8081', 'http://127.0.0.1:8081'];
-  const origin = req.headers.origin || '';
+// app.use((req, res, next) => {
+//   const allowedOrigins = ['http://localhost:8081', 'http://127.0.0.1:8081'];
+//   const origin = req.headers.origin || '';
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    next();
-  } else {
-    res.status(403).json({ message: 'Forbidden - You can not access this' });
-  }
-});
+//   if (allowedOrigins.includes(origin)) {
+//     res.setHeader('Access-Control-Allow-Origin', origin);
+//     next();
+//   } else {
+//     res.status(403).json({ message: 'Forbidden - You can not access this' });
+//   }
+// });
 
 // routes
 app.get('/products/:id', getProductDetails);
+app.put('/products/:id', updateProduct);
 app.get('/products', getProducts);
 app.post('/products', createProduct);
 
