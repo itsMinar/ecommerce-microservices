@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of service directories
-services=("services/auth" "services/email" "services/inventory" "services/product" "services/user")
+services=("services/auth" "services/cart" "services/email" "services/inventory" "services/order" "services/product" "services/user")
 
 # Loop through each service directory and run the app
 for service in "${services[@]}"

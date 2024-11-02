@@ -37,7 +37,7 @@ const getMyCart = async (req: Request, res: Response, next: NextFunction) => {
       };
     });
 
-    res.status(200).json({ data: formattedItems });
+    res.status(200).json({ items: formattedItems });
   } catch (error) {
     next(error);
   }
